@@ -1,3 +1,20 @@
+## Запуск
+
+Клонируем репозиторий с подмодулями
+```sh
+git clone --recurse-submodules https://github.com/We-ll-think-about-it-later/identity-service.git
+```
+
+Переименовываем файл шаблона окружения в .env
+```sh
+mv env.template .env
+```
+
+Запускаем Docker-контейнеры
+```sh
+docker-compose up -d --build
+```
+
 ## Backend
 
 ### Аутентификация

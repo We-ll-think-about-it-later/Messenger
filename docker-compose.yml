@@ -1,0 +1,53 @@
+services:
+  gateway:
+    build: ./gateway 
+    container_name: gateway-service
+    environment:
+      - IDENTITY_SERVICE_ADDRESSES=http://identity-service:8081
+      - HTTP_PORT=8080
+      - LOG_LEVEL=${LOG_LEVEL}
+      - ACCESS_TOKEN_SECRET=${ACCESS_TOKEN_SECRET}
+    depends_on:
+      - identity
+    networks:
+      - net
+    ports:
+      - "8080:8080"
+
+  identity:
+    build: ./identity-service
+    container_name: identity-service
+    environment:
+      - HTTP_PORT=8081
+      - GIN_MODE=${GIN_MODE}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - MONGO_HOST=${MONGO_HOST}
+      - MONGO_PORT=${MONGO_PORT}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - ACCESS_TOKEN_LIFETIME=${ACCESS_TOKEN_LIFETIME}
+      - ACCESS_TOKEN_SECRET=${ACCESS_TOKEN_SECRET}
+      - EMAIL_LOGIN=${EMAIL_LOGIN}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - EMAIL_SMTP_HOST=${EMAIL_SMTP_HOST}
+      - EMAIL_SMTP_PORT=${EMAIL_SMTP_PORT} 
+    depends_on:
+      - mongo
+    networks:
+      - net
+    ports:
+      - "8081:8081"
+
+  mongo:
+     container_name: mongodb
+     image: mongo
+     environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+     restart: always
+     networks:
+       - net
+
+networks:
+  net:
+    driver: bridge
